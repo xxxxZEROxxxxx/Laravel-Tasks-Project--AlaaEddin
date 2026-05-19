@@ -4,6 +4,7 @@
 // Task #01: Course Registration System
 // =============================================
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -95,4 +96,48 @@ Route::post('/cancel-registration', function () {
     session()->forget('level');
 
     return redirect('/register-course');
+});
+
+// =============================================
+// Task #02: Course Addition Feature
+// =============================================
+
+// Show courses management page
+Route::get('/courses', function () {
+    return view('courses');
+});
+
+// Show add course form
+Route::get('/courses/create', function () {
+    return view('add_course');
+});
+
+// Handle saving a new course to the database
+Route::post('/courses/store', function () {
+
+    $course_name = request('course_name');
+    $teacher_name = request('teacher_name');
+    $course_hours = request('course_hours');
+
+    // Simple manual validation
+    if (empty($course_name)) {
+        return redirect()->back()->with('error', 'Course name is required');
+    }
+    if (empty($teacher_name)) {
+        return redirect()->back()->with('error', 'Teacher name is required');
+    }
+    if (empty($course_hours)) {
+        return redirect()->back()->with('error', 'Course hours is required');
+    }
+
+    // Insert the course into the database
+    DB::table('courses')->insert([
+        'course_name' => $course_name,
+        'teacher_name' => $teacher_name,
+        'course_hours' => $course_hours,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
+
+    return redirect('/courses')->with('success', 'Course added successfully!');
 });
