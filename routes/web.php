@@ -102,9 +102,10 @@ Route::post('/cancel-registration', function () {
 // Task #02: Course Addition Feature
 // =============================================
 
-// Show courses management page
+// Show courses management page (updated in Task #03 to read from database)
 Route::get('/courses', function () {
-    return view('courses');
+    $courses = DB::table('courses')->get();
+    return view('courses', compact('courses'));
 });
 
 // Show add course form
@@ -140,4 +141,58 @@ Route::post('/courses/store', function () {
     ]);
 
     return redirect('/courses')->with('success', 'Course added successfully!');
+});
+
+// =============================================
+// Task #03: Display, Edit, Update, and Delete Courses
+// =============================================
+
+// Show edit course form
+Route::get('/courses/edit/{id}', function ($id) {
+
+    $course = DB::table('courses')->where('id', $id)->first();
+
+    // If course not found, redirect with error
+    if (!$course) {
+        return redirect('/courses')->with('error', 'Course not found');
+    }
+
+    return view('edit_course', compact('course'));
+});
+
+// Handle updating a course
+Route::post('/courses/update/{id}', function ($id) {
+
+    $course_name = request('course_name');
+    $teacher_name = request('teacher_name');
+    $course_hours = request('course_hours');
+
+    // Simple manual validation
+    if (empty($course_name)) {
+        return redirect()->back()->with('error', 'Course name is required');
+    }
+    if (empty($teacher_name)) {
+        return redirect()->back()->with('error', 'Teacher name is required');
+    }
+    if (empty($course_hours)) {
+        return redirect()->back()->with('error', 'Course hours is required');
+    }
+
+    // Update the course in the database
+    DB::table('courses')->where('id', $id)->update([
+        'course_name' => $course_name,
+        'teacher_name' => $teacher_name,
+        'course_hours' => $course_hours,
+        'updated_at' => now(),
+    ]);
+
+    return redirect('/courses')->with('success', 'Course updated successfully!');
+});
+
+// Handle deleting a course
+Route::post('/courses/delete/{id}', function ($id) {
+
+    DB::table('courses')->where('id', $id)->delete();
+
+    return redirect('/courses')->with('success', 'Course deleted successfully!');
 });
