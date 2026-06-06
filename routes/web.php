@@ -4,8 +4,8 @@
 // Task #01: Course Registration System
 // =============================================
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CourseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -100,103 +100,15 @@ Route::post('/cancel-registration', function () {
 });
 
 // =============================================
-// Task #02: Course Addition Feature
+// Task #05: Course Routes (using CourseController + Eloquent ORM)
 // =============================================
 
-// Show courses management page (updated in Task #03 to read from database)
-Route::get('/courses', function () {
-    $courses = DB::table('courses')->get();
-    return view('courses', compact('courses'));
-});
-
-// Show add course form
-Route::get('/courses/create', function () {
-    return view('add_course');
-});
-
-// Handle saving a new course to the database
-Route::post('/courses/store', function () {
-
-    $course_name = request('course_name');
-    $teacher_name = request('teacher_name');
-    $course_hours = request('course_hours');
-
-    // Simple manual validation
-    if (empty($course_name)) {
-        return redirect()->back()->with('error', 'Course name is required');
-    }
-    if (empty($teacher_name)) {
-        return redirect()->back()->with('error', 'Teacher name is required');
-    }
-    if (empty($course_hours)) {
-        return redirect()->back()->with('error', 'Course hours is required');
-    }
-
-    // Insert the course into the database
-    DB::table('courses')->insert([
-        'course_name' => $course_name,
-        'teacher_name' => $teacher_name,
-        'course_hours' => $course_hours,
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
-
-    return redirect('/courses')->with('success', 'Course added successfully!');
-});
-
-// =============================================
-// Task #03: Display, Edit, Update, and Delete Courses
-// =============================================
-
-// Show edit course form
-Route::get('/courses/edit/{id}', function ($id) {
-
-    $course = DB::table('courses')->where('id', $id)->first();
-
-    // If course not found, redirect with error
-    if (!$course) {
-        return redirect('/courses')->with('error', 'Course not found');
-    }
-
-    return view('edit_course', compact('course'));
-});
-
-// Handle updating a course
-Route::post('/courses/update/{id}', function ($id) {
-
-    $course_name = request('course_name');
-    $teacher_name = request('teacher_name');
-    $course_hours = request('course_hours');
-
-    // Simple manual validation
-    if (empty($course_name)) {
-        return redirect()->back()->with('error', 'Course name is required');
-    }
-    if (empty($teacher_name)) {
-        return redirect()->back()->with('error', 'Teacher name is required');
-    }
-    if (empty($course_hours)) {
-        return redirect()->back()->with('error', 'Course hours is required');
-    }
-
-    // Update the course in the database
-    DB::table('courses')->where('id', $id)->update([
-        'course_name' => $course_name,
-        'teacher_name' => $teacher_name,
-        'course_hours' => $course_hours,
-        'updated_at' => now(),
-    ]);
-
-    return redirect('/courses')->with('success', 'Course updated successfully!');
-});
-
-// Handle deleting a course
-Route::post('/courses/delete/{id}', function ($id) {
-
-    DB::table('courses')->where('id', $id)->delete();
-
-    return redirect('/courses')->with('success', 'Course deleted successfully!');
-});
+Route::get('/courses', [CourseController::class, 'index']);
+Route::get('/courses/create', [CourseController::class, 'create']);
+Route::post('/courses/store', [CourseController::class, 'store']);
+Route::get('/courses/edit/{id}', [CourseController::class, 'edit']);
+Route::post('/courses/update/{id}', [CourseController::class, 'update']);
+Route::post('/courses/delete/{id}', [CourseController::class, 'destroy']);
 
 // =============================================
 // Task #04: User Management (using Controller)
