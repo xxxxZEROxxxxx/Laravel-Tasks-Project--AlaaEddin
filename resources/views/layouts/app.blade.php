@@ -20,6 +20,7 @@
             <div class="space-x-4">
                 <a href="/" class="hover:underline">Dashboard</a>
                 <a href="/courses" class="hover:underline">Courses</a>
+                <a href="/users" class="hover:underline">Users</a>
             </div>
         </div>
     </nav>
@@ -33,6 +34,11 @@
                 <li>
                     <a href="/courses" class="block text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded px-3 py-2">
                         Courses
+                    </a>
+                </li>
+                <li>
+                    <a href="/users" class="block text-gray-700 hover:text-blue-600 hover:bg-gray-100 rounded px-3 py-2">
+                        Users
                     </a>
                 </li>
             </ul>

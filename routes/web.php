@@ -5,6 +5,7 @@
 // =============================================
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -196,3 +197,14 @@ Route::post('/courses/delete/{id}', function ($id) {
 
     return redirect('/courses')->with('success', 'Course deleted successfully!');
 });
+
+// =============================================
+// Task #04: User Management (using Controller)
+// =============================================
+
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/create', [UserController::class, 'create']);
+Route::post('/users/store', [UserController::class, 'store']);
+Route::get('/users/edit/{id}', [UserController::class, 'edit']);
+Route::post('/users/update/{id}', [UserController::class, 'update']);
+Route::post('/users/delete/{id}', [UserController::class, 'destroy']);
